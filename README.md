@@ -9,3 +9,5 @@ https://www.homedepot.ca/product/tzumi-auraled-colorquad-a19-e26-5-watt-multicol
 # 0xF730CF，0xF7B04F，0xF7708F，0xF7F00F
 # 0xF708F7，0xF78877，0xF748B7，0xF7C837
 # 0xF728D7，0xF7A857，0xF76897，0xF7E817
+esp32 2.0.11
+IRremoteESP8266 2.8.6
