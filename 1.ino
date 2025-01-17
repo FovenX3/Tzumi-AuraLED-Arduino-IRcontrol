@@ -39,13 +39,7 @@ void setup() {
   irsend.begin();
   
   // 连接WiFi
-  WiFi.begin(ssid, password);
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(1000);
-    Serial.println("正在连接WiFi...");
-  }
-  Serial.println("WiFi连接成功!");
-  Serial.println(WiFi.localIP());
+  connectToWiFi();
 
   // 设置web页面
   server.on("/", []() {
@@ -63,17 +57,9 @@ void setup() {
       String codeStr = server.arg("code");
       int codeIndex = codeStr.toInt();
       if (codeIndex >= 0 && codeIndex < 24) {
-        irsend.sendNEC(irCommands[codeIndex]);
-        irsend.sendNEC(irCommands[codeIndex]);
-        irsend.sendNEC(irCommands[codeIndex]);
-        irsend.sendNEC(irCommands[codeIndex]);
-        irsend.sendNEC(irCommands[codeIndex]);
-        irsend.sendNEC(irCommands[codeIndex]);
-        irsend.sendNEC(irCommands[codeIndex]);
-        irsend.sendNEC(irCommands[codeIndex]);
-        irsend.sendNEC(irCommands[codeIndex]);
-        irsend.sendNEC(irCommands[codeIndex]);
-
+        for (int i = 0; i < 10; i++) {  // 重发10次
+          irsend.sendNEC(irCommands[codeIndex]);
+        }
         server.send(200, "text/plain", "success");
       } else {
         server.send(400, "text/plain", "无效的命令索引");
@@ -88,5 +74,20 @@ void setup() {
 }
 
 void loop() {
+  // 检查WiFi连接状态
+  if (WiFi.status() != WL_CONNECTED) {
+    Serial.println("WiFi 断开，尝试重新连接...");
+    connectToWiFi();
+  }
   server.handleClient();
+}
+
+void connectToWiFi() {
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(1000);
+    Serial.println("正在连接WiFi...");
+  }
+  Serial.println("WiFi连接成功!");
+  Serial.println(WiFi.localIP());
 }
